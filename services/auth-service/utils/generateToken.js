@@ -1,7 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const User = require('./models/User');
+const User = require('../models/User');
 
 const generateToken = (user) => {
     const jwt_id = uuidv4();

@@ -3,8 +3,8 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const generateToken = require('../utils/generateToken');
-const User = require('./User');
-const RefreshToken = require('./RefreshToken');
+const User = require('../models/User');
+const RefreshToken = require('../models/RefreshToken');
 
 const redirectGitHub = async (req, res) => {
     const params = new URLSearchParams({
@@ -87,3 +87,5 @@ const callbackGitHub = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+module.exports = { redirectGitHub, callbackGitHub };

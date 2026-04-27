@@ -2,10 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const generateToken = require('./generateToken');
-const User = require('./User');
-const RefreshToken = require('./RefreshToken');
-const BlacklistedToken = require('./BlacklistedToken');
+const generateToken = require('../utils/generateToken');
+const User = require('../models/User');
+const RefreshToken = require('../models/RefreshToken');
+const BlacklistedToken = require('../models/BlacklistedToken');
 
 const register = async (req, res) => {
     try {
@@ -141,3 +141,5 @@ const whoami = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+module.exports = { register, login, refresh, logout, whoami };
