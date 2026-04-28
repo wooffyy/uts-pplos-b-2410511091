@@ -30,13 +30,8 @@ class EventController extends Controller
     }
 
     public function store(StoreEventRequest $request) {
-        $org_id = $request->header('X-User-Id');
-        if (!$org_id) {
-            return response()->json([ 'message' => 'X-User-Id is required' ], 404);
-        }
-
         $data = $request->validated();
-        $data['organizer_id'] = $org_id;
+        $data['organizer_id'] = $request->attributes->get('user_id');
 
         $event = Event::create($data);
 
@@ -54,7 +49,7 @@ class EventController extends Controller
     }
 
     public function update(UpdateEventRequest $request, string $id){
-        $org_id = $request->header('X-User-Id');
+        $org_id = $request->attributes->get('user_id');
         $event = Event::find($id);
 
         if (!$event) {
@@ -71,7 +66,7 @@ class EventController extends Controller
     }
 
     public function destroy(Request $request, $id) {
-        $org_id = $request->header('X-User-Id');
+        $org_id = $request->attributes->get('user_id');
         $event = Event::find($id);
 
         if (!$event) {
@@ -83,7 +78,7 @@ class EventController extends Controller
         }
 
         $event->destroy();
-        
+
         return response()->json([ 'message' => 'Event deleted', 204 ]);
     }
 }
