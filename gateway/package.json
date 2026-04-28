@@ -9,13 +9,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.33.2",
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.4.1",
     "http-proxy-middleware": "^3.0.5",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
