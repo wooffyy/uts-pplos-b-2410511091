@@ -50,7 +50,7 @@ const verifyToken = (req, res, next) => {
     const token = authHeader.split(' ')[1]
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.headers['x-user-id'] = decoded.id 
+        req.headers['x-user-id'] = String(decoded.sub) 
         req.headers['x-user-email'] = decoded.email
         next()
     } catch (error) {
@@ -88,7 +88,7 @@ app.use('/events', authLimiter, createProxyMiddleware({
 }))
 
 app.use('/orders', authLimiter, createProxyMiddleware({
-    ...proxyHandler('http://localhost:3003'),
+    ...proxyHandler('http://localhost:3002'),
     pathRewrite: { '^/orders': '' }
 }))
 
