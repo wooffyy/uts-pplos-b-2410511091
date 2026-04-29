@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('event_date');
             $table->unsignedBigInteger('organizer_id');
             $table->enum('status', ['scheduled', 'ongoing', 'cancelled', 'completed'])->default('scheduled');
-            $table->timestamps('created_at', 'updated_at');
+            $table->timestamps();
         });
     }
 

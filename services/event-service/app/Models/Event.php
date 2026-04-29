@@ -13,7 +13,7 @@ class Event extends Model
 
     protected $casts = [
         'event_date' => 'datetime',
-        'status' => 'enum'
+        'status' => 'string'
     ];
 
     public function tickets()

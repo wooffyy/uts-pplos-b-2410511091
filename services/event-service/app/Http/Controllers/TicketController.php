@@ -33,12 +33,12 @@ class TicketController extends Controller
         }
 
         if($tickets->quota_remaining < $quantity){
-            return response()->json(['message' => 'Not enough quota'], 400);
+            return response()->json(['message' => 'Not enough quota'], 409);
         }
 
         $tickets->quota_remaining -= $quantity;
         $tickets->save();
-        
+
         return response()->json([ 'message' => 'Quota reduced', 'data' => $tickets ]);
     }
 }

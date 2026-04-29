@@ -57,7 +57,7 @@ class EventController extends Controller
         }
 
         if ($event->organizer_id !== $org_id){
-            return response()->json([ 'message' => 'Forbidden', 403 ]);
+            return response()->json([ 'message' => 'Forbidden' ], 403);
         }
 
         $event->update($request->validated());
@@ -77,8 +77,8 @@ class EventController extends Controller
             return response()->json([ 'message' => 'Forbidden', 403 ]);
         }
 
-        $event->destroy();
+        $event->delete();
 
-        return response()->json([ 'message' => 'Event deleted', 204 ]);
+        return response()->noContent();
     }
 }
