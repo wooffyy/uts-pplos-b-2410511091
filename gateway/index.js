@@ -50,7 +50,7 @@ const verifyToken = (req, res, next) => {
     const token = authHeader.split(' ')[1]
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.headers['x-user-id'] = decoded.id 
+        req.headers['x-user-id'] = String(decoded.sub) 
         req.headers['x-user-email'] = decoded.email
         next()
     } catch (error) {
@@ -63,6 +63,7 @@ const verifyToken = (req, res, next) => {
 }
 
 app.use(express.json())
+app.use(verifyToken)
 
 // buat proxy ke masing masing service
 const proxyHandler = (target) => ({
@@ -76,7 +77,6 @@ const proxyHandler = (target) => ({
     }
 })
 
-app.use(proxyHandler)
 app.use('/auth', authLimiter, createProxyMiddleware({
     ...proxyHandler('http://localhost:3001'),
     pathRewrite: { '^/auth': '' }
@@ -90,11 +90,6 @@ app.use('/events', authLimiter, createProxyMiddleware({
 app.use('/orders', authLimiter, createProxyMiddleware({
     ...proxyHandler('http://localhost:3003'),
     pathRewrite: { '^/orders': '' }
-}))
-
-app.use('/tickets', authLimiter, createProxyMiddleware({
-    ...proxyHandler('http://localhost:3003'),
-    pathRewrite: { '^/tickets': '' }
 }))
 
 app.use((req, res) => {
