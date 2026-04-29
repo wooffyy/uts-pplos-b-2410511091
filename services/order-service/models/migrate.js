@@ -18,6 +18,8 @@ async function migrate(){
         id INT AUTO_INCREMENT PRIMARY KEY,
         order_id INT NOT NULL,
         ticket_code VARCHAR(36) UNIQUE,
+        ticket_name VARCHAR(100) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
         is_used TINYINT(1) DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (order_id) REFERENCES orders(id))`
