@@ -63,6 +63,7 @@ const verifyToken = (req, res, next) => {
 }
 
 app.use(express.json())
+app.use(verifyToken)
 
 // buat proxy ke masing masing service
 const proxyHandler = (target) => ({
@@ -76,7 +77,6 @@ const proxyHandler = (target) => ({
     }
 })
 
-app.use(proxyHandler)
 app.use('/auth', authLimiter, createProxyMiddleware({
     ...proxyHandler('http://localhost:3001'),
     pathRewrite: { '^/auth': '' }
@@ -88,13 +88,8 @@ app.use('/events', authLimiter, createProxyMiddleware({
 }))
 
 app.use('/orders', authLimiter, createProxyMiddleware({
-    ...proxyHandler('http://localhost:3002'),
-    pathRewrite: { '^/orders': '' }
-}))
-
-app.use('/tickets', authLimiter, createProxyMiddleware({
     ...proxyHandler('http://localhost:3003'),
-    pathRewrite: { '^/tickets': '' }
+    pathRewrite: { '^/orders': '' }
 }))
 
 app.use((req, res) => {

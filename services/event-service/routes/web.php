@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\TicketCategoryController;
+use App\Http\Controllers\TicketController;
 
 Route::middleware('gateway.auth')->group(function () {
 
@@ -14,6 +14,6 @@ Route::middleware('gateway.auth')->group(function () {
     Route::delete('/{id}', [EventController::class, 'destroy']);
 
     // tickets
-    Route::get('/{eventId}/tickets', [TicketCategoryController::class, 'index']);
-    Route::patch('/tickets/{id}/reduce-quota', [TicketCategoryController::class, 'reduceQuota']);
+    Route::get('/{eventId}/tickets', [TicketController::class, 'index']);
+    Route::patch('/tickets/{id}/reduce-quota', [TicketController::class, 'reduceQuota']);
 });
