@@ -18,20 +18,20 @@ const register = async (req, res) => {
         if (exist) return res.status(409).json({ message: 'Email already exists' })
 
         const password_hashed = await bcrypt.hash(password, 10);
-        const id = User.create({ name, email, password_hashed });
+        const id = await User.create({ name, email, password_hashed, avatar_url: null, oauth_provider: null, oauth_id: null });
         const user = await User.findById(id);
 
         const { accessToken, refreshToken } = generateToken(user);
         
         const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-        const expires_at = new Date(Date.now() + process.env.REFRESH_TOKEN_EXPIRES_IN);
+        const expires_at = new Date(Date.now() + parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN));
         await RefreshToken.create({ user_id: user.id, token: tokenHash, expires_at });
 
         return res.status(201).json({ 
             message: 'User created successfully', 
             access_token: accessToken, 
             refresh_token: refreshToken,
-            user: { id: user_id, name: user.name, email: user.email }, 
+            user: { id: user.id, name: user.name, email: user.email }, 
          });
 
     } catch (error) {
@@ -56,14 +56,14 @@ const login = async (req, res) => {
         const { accessToken, refreshToken } = generateToken(user);
         
         const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-        const expires_at = new Date(Date.now() + process.env.REFRESH_TOKEN_EXPIRES_IN);
+        const expires_at = new Date(Date.now() + parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN));
         await RefreshToken.create({ user_id: user.id, token: tokenHash, expires_at });
 
         return res.status(200).json({ 
             message: 'Login success', 
             access_token: accessToken, 
             refresh_token: refreshToken,
-            user: { id: user_id, name: user.name, email: user.email }, 
+            user: { id: user.id, name: user.name, email: user.email }, 
          });
 
     } catch (error) {
@@ -82,11 +82,13 @@ const refresh = async (req, res) => {
         if (!token) return res.status(401).json({ message: 'Invalid refresh token' });
 
         const user = await User.findById(token.user_id);
+        if (!user) return res.status(401).json({ message: 'User not found' });
+        
         const { accessToken, refreshToken } = generateToken(user);
 
         const revoke = await RefreshToken.revoke(tokenHash);
         const newHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-        const expires_at = new Date(Date.now() + process.env.REFRESH_TOKEN_EXPIRES_IN);
+        const expires_at = new Date(Date.now() + parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN));
         await RefreshToken.create({ user_id: user.id, token: newHash, expires_at });
 
         return res.status(200).json({
@@ -108,7 +110,7 @@ const logout = async (req, res) => {
         const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        await TokenBlacklist.create({ jwt_id: decoded.jwt_id, expires_at: new Date(decoded.exp * 1000) });
+        await BlacklistedToken.insert({ jwt_id: decoded.jwt_id, expires_at: new Date(decoded.exp * 1000) });
         const { refresh_token } = req.body;
         if (refresh_token) {
             const tokenHash = crypto.createHash('sha256').update(refresh_token).digest('hex');
@@ -125,7 +127,8 @@ const logout = async (req, res) => {
 
 const whoami = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        const id = req.headers['x-user-id'];
+        const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         return res.status(200).json({
