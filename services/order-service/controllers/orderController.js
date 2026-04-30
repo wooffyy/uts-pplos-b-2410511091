@@ -16,19 +16,21 @@ const checkout = async (req, res) => {
 
         // ambil event dan ticket lewat hit endpoint event service
         const getEvent = await axios.get(
-            `${process.env.EVENT_SERVICE_URL}/events/${event_id}`, 
+            `${process.env.EVENT_SERVICE_URL}/${event_id}`, 
             { headers: { 'X-User-Id': user_id, Accept: 'application/json', }, validateStatus: () => true }
         )
+        console.log('Event status:', getEvent.status)
+        console.log('Event data:', getEvent.data)
         if (getEvent.status !== 200) return res.status(404).json({ message: 'Event not found' })
 
         const getTicket = await axios.get(
-            `${process.env.EVENT_SERVICE_URL}/events/${event_id}/tickets`,
-            { headers: { 'X-User-Id': user_id, Accept: 'application/json', }, validateStatus: () => true } 
+            `${process.env.EVENT_SERVICE_URL}/tickets/${ticket_id}`,
+            { headers: { 'X-User-Id': user_id, Accept: 'application/json' }, validateStatus: () => true }
         )
         if (getTicket.status !== 200) return res.status(404).json({ message: 'Ticket not found' })
 
         // cari ticket yang mau dibeli
-        const ticket = getTicket.data.find(ticket => ticket.id == ticket_id) 
+        const ticket = getTicket.data
         if (!ticket) return res.status(404).json({ message: 'Ticket not found' })
 
         const totalPrice = ticket.price * quantity

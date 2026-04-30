@@ -9,7 +9,7 @@ const pay = async (req, res) => {
         const user_id = req.headers['x-user-id']
         if (!user_id) return res.status(401).json({ message: 'Unauthorized' })
 
-        const order_id = req.body.order_id
+        const order_id = req.params.id
         if (!order_id) return res.status(400).json({ message: 'Bad request' })
 
         const method = req.body.method

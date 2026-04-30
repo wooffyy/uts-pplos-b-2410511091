@@ -74,7 +74,7 @@ class EventController extends Controller
         }
 
         if ($event->organizer_id !== $org_id){
-            return response()->json([ 'message' => 'Forbidden', 403 ]);
+            return response()->json([ 'message' => 'Forbidden' ], 403);
         }
 
         $event->delete();
