@@ -1,6 +1,10 @@
 const pool = require('./db');
 
 async function migrate() {
+    await pool.execute(`DROP TABLE IF EXISTS blacklisted_tokens;`);
+    await pool.execute(`DROP TABLE IF EXISTS refresh_tokens;`);
+    await pool.execute(`DROP TABLE IF EXISTS users;`);
+
     await pool.execute(`
         CREATE TABLE IF NOT EXISTS users(
         id INT AUTO_INCREMENT PRIMARY KEY,

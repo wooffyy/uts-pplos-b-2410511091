@@ -9,15 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureGatewayAuth
 {
     public function handle(Request $request, Closure $next): Response {
-        // ambil user dari gateway
-        $userId = $request->header('X-User-Id');
+    $userId = $request->header('X-User-Id');
 
-        if (!$userId || !is_numeric($userId)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+    if (!$userId || !is_numeric($userId)) {
+        // kalo request ke endpoint GET yang public dibiarin lewat
+        if ($request->isMethod('GET')) {
+            return $next($request);
         }
-
-        $request->attributes->set('user_id', (int) $userId);
-
-        return $next($request);
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
+
+    $request->attributes->set('user_id', (int) $userId);
+    return $next($request);
+}
 }

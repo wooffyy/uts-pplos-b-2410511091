@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const { createProxyMiddleware } = require('http-proxy-middleware')
 const rateLimit = require('express-rate-limit')
@@ -19,7 +20,7 @@ const globalLimiter = rateLimit({
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
-    message: { message: 'Too many requests, terlalu banyak request Login/Register!' }
+    message: { message: "Too many requests, terlalu banyak request Login/Register!" }
 })
 
 app.use(globalLimiter)
@@ -30,7 +31,7 @@ const publicRoutes = [
     {method: 'POST', path: '/auth/refresh'},
     {method: 'GET', path: '/auth/github'},
     {method: 'GET', path: '/auth/github/callback'},
-    {method: 'GET', path: '/event'},
+    {method: 'GET', path: '/events'},
 ]
 
 const isPublicRoute = (req) => {
@@ -62,7 +63,6 @@ const verifyToken = (req, res, next) => {
     }
 }
 
-app.use(express.json())
 app.use(verifyToken)
 
 // buat proxy ke masing masing service

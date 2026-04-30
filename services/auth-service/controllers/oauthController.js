@@ -65,10 +65,10 @@ const callbackGitHub = async (req, res) => {
             oauth_id: String(githubUser.id),
         });
 
-        const { accessToken, refreshToken, jwt_id } = generateToken(user);
+        const { accessToken, refreshToken } = generateToken(user);
 
         const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-        const expires_at = new Date(Date.now() + process.env.REFRESH_TOKEN_EXPIRES_IN);
+        const expires_at = new Date(Date.now() + parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN));
         await RefreshToken.create({ user_id: user.id, token: tokenHash, expires_at });
 
         return res.status(200).json({

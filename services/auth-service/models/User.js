@@ -25,7 +25,7 @@ const User = {
             SELECT *
             FROM users
             WHERE email = ?`, 
-            [id]
+            [email]
         );
         return row[0] || null;
     },

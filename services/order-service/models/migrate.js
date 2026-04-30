@@ -1,6 +1,10 @@
 const pool = require('./db');
 
 async function migrate(){
+    await pool.execute(`DROP TABLE IF EXISTS payments;`);
+    await pool.execute(`DROP TABLE IF EXISTS order_items;`);
+    await pool.execute(`DROP TABLE IF EXISTS orders;`);
+    
     await pool.execute(`
         CREATE TABLE IF NOT EXISTS orders(
         id INT AUTO_INCREMENT PRIMARY KEY,
