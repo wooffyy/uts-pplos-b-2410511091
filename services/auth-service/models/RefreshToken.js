@@ -1,5 +1,4 @@
 const pool = require('./db');
-const { create } = require('./User');
 
 const RefreshToken = {
     async create({ user_id, token, expires_at }) {

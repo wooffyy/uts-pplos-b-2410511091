@@ -17,7 +17,7 @@ class UpdateEventRequest extends FormRequest
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
             'location' => 'sometimes|required|string|max:255',
-            'event_date' => 'sometimes|required|datetime|after_or_equal:today',
+            'event_date' => 'sometimes|required|date|after_or_equal:today',
             'status' => 'sometimes|required|in:scheduled,ongoing,cancelled,completed',
         ];
     }
