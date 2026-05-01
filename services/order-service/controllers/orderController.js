@@ -33,13 +33,13 @@ const checkout = async (req, res) => {
         const ticket = getTicket.data
         if (!ticket) return res.status(404).json({ message: 'Ticket not found' })
 
-        const totalPrice = ticket.price * quantity
         const updateQuota = await axios.patch(
             `${process.env.EVENT_SERVICE_URL}/tickets/${ticket_id}/reduce-quota`,
             { quantity }, { headers: { 'X-User-Id': user_id }, validateStatus: () => true }
         )
-        if (updateQuota.status === 409) return res.status(409).json({ message: 'Quota is not enough to complete the order' })
-        
+        if (updateQuota.status === 409) return res.status(409).json({ message: 'Invalid quantity to complete order' })
+                
+        const totalPrice = parseFloat(ticket.price) * quantity
         const orderId = await Order.create({ user_id, event_id, ticket_id, quantity, total_price: totalPrice }) 
         const ticketCodes = await OrderItem.bulkCreate(orderId, quantity, ticket.name, ticket.price) 
         
@@ -73,9 +73,9 @@ const getOrderById = async (req, res) => {
         if (!order_id) return res.status(400).json({ message: 'Bad request' })
 
         const order = await Order.findById(order_id)
-        if (!order) return res.status(404).json({ message: 'Order not found' })
+        if (!order) return res.status(200).json({ message: 'Order not found', orders: [] })
         if (order.user_id !== parseInt(user_id)) return res.status(403).json({ message: 'Forbidden' })
-
+        
         return res.status(200).json({ message: 'Order found', order })
     } catch (error) {
         console.log(error)

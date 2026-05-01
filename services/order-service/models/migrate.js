@@ -1,6 +1,7 @@
 const pool = require('./db');
 
 async function migrate(){
+    await pool.execute(`DROP TABLE IF EXISTS validated_tickets;`);
     await pool.execute(`DROP TABLE IF EXISTS payments;`);
     await pool.execute(`DROP TABLE IF EXISTS order_items;`);
     await pool.execute(`DROP TABLE IF EXISTS orders;`);
