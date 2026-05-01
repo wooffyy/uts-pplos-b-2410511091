@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken')
 const morgan = require('morgan') // logger
 const port = 3000
 
+app.use(require('helmet')())
 app.use(morgan('dev'))
 
 // rate limit buat endpoint public 1 menit
@@ -82,12 +83,12 @@ app.use('/auth', authLimiter, createProxyMiddleware({
     pathRewrite: { '^/auth': '' }
 }))
 
-app.use('/events', authLimiter, createProxyMiddleware({
+app.use('/events', globalLimiter, createProxyMiddleware({
     ...proxyHandler('http://localhost:3002'),
     pathRewrite: { '^/events': '' }
 }))
 
-app.use('/orders', authLimiter, createProxyMiddleware({
+app.use('/orders', globalLimiter, createProxyMiddleware({
     ...proxyHandler('http://localhost:3003'),
     pathRewrite: { '^/orders': '' }
 }))

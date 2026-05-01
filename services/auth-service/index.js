@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT;
 const router = require('./routes/route');
 
+app.use(require('helmet')())
 app.use(express.json());
 app.use('/', router);
 
