@@ -41,6 +41,17 @@ async function migrate(){
         FOREIGN KEY (order_id) REFERENCES orders(id))`
     );
 
+    await pool.execute(`
+        CREATE TABLE IF NOT EXISTS validated_tickets (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_item_id INT NOT NULL,
+        ticket_code VARCHAR(36) NOT NULL,
+        validated_by INT NOT NULL,
+        validated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        gate VARCHAR(100) DEFAULT 'main',
+        FOREIGN KEY (order_item_id) REFERENCES order_items(id))`
+    );
+
     console.log('Order DB migrated successfully');
     process.exit(0);
 }

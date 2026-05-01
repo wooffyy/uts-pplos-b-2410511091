@@ -4,6 +4,7 @@ const QRCode = require('qrcode')
 const Order = require('../models/Order')
 const OrderItem = require('../models/OrderItem')
 const Payment = require('../models/Payment')
+const TicketValidation = require('../models/ValidatedTicket');
 
 const getETicket = async (req, res) => {
     try {
@@ -48,10 +49,17 @@ const validateTicket = async (req, res) => {
         if (!ticket) return res.status(404).json({ message: 'Ticket not found' })
         
         if (ticket.is_used === 1) return res.status(400).json({ message: 'Ticket is already used' })
-        const markUsed = await OrderItem.markAsUsed(ticket_code)
+        
+        await OrderItem.markAsUsed(ticket_code)
+        
+        await TicketValidation.create({
+            order_item_id: ticket.id,
+            ticket_code,
+            validated_by: parseInt(user_id),
+            gate: req.body.gate || 'main'
+        });
         
         return res.status(200).json({ valid: true, message: 'Ticket validated' })
-
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Internal server error' })
