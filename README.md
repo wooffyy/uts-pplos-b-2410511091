@@ -71,8 +71,6 @@ Justifikasi pemisahan service:
 | GET | /orders/:id/ticket | Order Service | Protected |
 | POST | /orders/validate-ticket | Order Service | Protected |
 
-Gateway melakukan JWT validation di sisi gateway sebelum meneruskan request ke service tujuan. Rate limiting diterapkan sebesar 60 request per menit per IP.
-
 ---
 ## Tech Stack
 
